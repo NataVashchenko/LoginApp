@@ -12,38 +12,31 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var userNameTextField: UITextField!
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-    
-    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
-        userNameTextField.text = nil
-        passwordTextField.text = nil
-    }
-
+    private let user = "Natalia"
+    private let password = "1"
+   
     
     // MARK: - Navigation
     
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-       let result = userNameTextField.text == "1" && passwordTextField.text == "1"
+    override func shouldPerformSegue(
+        withIdentifier identifier: String,
+        sender: Any?) -> Bool {
+       let result =
+            userNameTextField.text == user &&
+            passwordTextField.text == password
+            
         if !result {
-            let alert = UIAlertController(title: "Wrong user name or password", message: "Enter correct user name and password", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.cancel))
-            present(alert, animated: true)
+            showAlert(title: "Wrong user name or password",
+                      message: "Enter correct user name and password",
+                    textField: passwordTextField)
         }
         return result
     }
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        let userName = userNameTextField.text ?? ""
-        let welcomeViewController = segue.destination as! WelcomeViewController
-        welcomeViewController.title = "Welcome, \(userName)"
-        
+        if segue.identifier == "login" {
+            Session.user = user
+        }
     }
     
     // Метод для скрытия клавиатуры тапом по экрану
@@ -52,5 +45,28 @@ class LoginViewController: UIViewController {
         view.endEditing(true)
     }
     
-    
+    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
+        userNameTextField.text = nil
+        passwordTextField.text = nil
+    }
+
+    private func showAlert(title: String,
+                           message: String,
+                           textField: UITextField? = nil) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+            textField?.text = ""
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+        @IBAction func forgotUserName() {
+            showAlert(title: "Oops!", message: "Your name is \(user) 😉")
+        }
+    @IBAction func forgotPassword() {
+        showAlert(title: "Oops!", message: "Your password is \(password) 😉")
+    }
 }
